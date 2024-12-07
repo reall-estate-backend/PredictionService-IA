@@ -1,43 +1,43 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'python:3.9.20'
+        }
+    }
     environment {
-        DOCKER_CREDENTIALS_ID = 'dockerhub-credentials' // Update with your Docker credentials ID
-        IMAGE_NAME = 'realestate1234/python-microservice' // Replace with your Docker Hub repository
+        DOCKER_CREDENTIALS_ID = 'dockerhub-credentials'
+        IMAGE_NAME = 'your-dockerhub-username/python-microservice'
     }
     stages {
-        stage('Clone Repository') {
-            steps {
-                checkout scm
-            }
-        }
         stage('Install Dependencies') {
             steps {
-                 sh '''
-                        python3 -m venv venv
-                        source venv/bin/activate
-                        pip install -r requirements.txt
-                    ''' // Install Python dependencies
+                sh '''
+                    python3 -m venv venv
+                    . venv/bin/activate
+                    pip install -r requirements.txt
+                '''
             }
         }
         stage('Run Tests') {
             steps {
-                sh 'pytest' // Run unit tests
+                sh '''
+                    . venv/bin/activate
+                    pytest
+                '''
             }
         }
         stage('Build Docker Image') {
             steps {
-                script {
-                    def imageTag = "${IMAGE_NAME}:latest"
-                    sh "docker build -t ${imageTag} ."
-                }
+                sh '''
+                    docker build -t ${IMAGE_NAME}:latest .
+                '''
             }
         }
         stage('Push to Docker Hub') {
             steps {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
-                        def imageTag = "${IMAGE_NAME}:latest"
-                        sh "docker push ${imageTag}"
+                        sh "docker push ${IMAGE_NAME}:latest"
                     }
                 }
             }
