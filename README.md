@@ -1,1 +1,1 @@
-# PredictionService-IA
+# real-estate-prediction-project
