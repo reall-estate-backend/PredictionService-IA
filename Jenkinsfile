@@ -6,7 +6,7 @@ pipeline {
     }
     environment {
         DOCKER_CREDENTIALS_ID = 'dockerhub-credentials'
-        IMAGE_NAME = 'your-dockerhub-username/python-microservice'
+        IMAGE_NAME = 'realestate1234/python-microservice'
     }
     stages {
         stage('Install Dependencies') {
